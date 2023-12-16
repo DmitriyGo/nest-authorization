@@ -1,17 +1,20 @@
 import {
   BadRequestException,
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Get,
   HttpStatus,
   Post,
   Res,
   UnauthorizedException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 
 import { Cookie, Public, UserAgent } from '@common/decorators';
+import { UserResponse } from '@user/responses';
 
 import { AuthService } from './auth.service';
 import { LoginDto, RegisterDto } from './dto';
@@ -27,6 +30,7 @@ export class AuthController {
     private readonly configService: ConfigService,
   ) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post('register')
   async register(@Body() dto: RegisterDto) {
     const user = await this.authService.register(dto);
@@ -34,6 +38,8 @@ export class AuthController {
     if (!user) {
       throw new BadRequestException(`Something went wrong when trying to register user: ${JSON.stringify(dto)}`);
     }
+
+    return new UserResponse(user);
   }
 
   @Post('login')
