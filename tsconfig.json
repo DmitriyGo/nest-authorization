@@ -21,7 +21,10 @@
       "@prisma": ["src/prisma"],
       "@prisma/*": ["src/prisma/*"],
       "@user": ["src/user"],
-      "@user/*": ["src/user/*"]
+      "@user/*": ["src/user/*"],
+      "@auth/*": ["src/auth/*"],
+      "@common": ["libs/common/src"],
+      "@common/*": ["libs/common/src/*"]
     }
   }
 }
