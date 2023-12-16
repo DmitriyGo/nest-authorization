@@ -11,7 +11,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 
-import { Cookie, UserAgent } from '@common/decorators';
+import { Cookie, Public, UserAgent } from '@common/decorators';
 
 import { AuthService } from './auth.service';
 import { LoginDto, RegisterDto } from './dto';
@@ -19,6 +19,7 @@ import { Tokens } from './interfaces';
 
 const REFRESH_TOKEN = 'refreshToken';
 
+@Public()
 @Controller('auth')
 export class AuthController {
   constructor(
