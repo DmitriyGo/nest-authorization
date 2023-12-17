@@ -1,6 +1,13 @@
-import { ConflictException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Token, User } from '@prisma/client';
+import { Provider, Token, User } from '@prisma/client';
 import { compareSync } from 'bcrypt';
 import { add } from 'date-fns';
 import { v4 } from 'uuid';
@@ -42,6 +49,10 @@ export class AuthService {
       return null;
     });
 
+    if (user && !user.password) {
+      throw new UnauthorizedException('Account was registered with auth provider');
+    }
+
     if (!user || !compareSync(dto.password, user.password)) {
       throw new UnauthorizedException('Wrong login or password');
     }
@@ -60,6 +71,32 @@ export class AuthService {
 
   deleteRefreshToken(token: string) {
     return this.prismaService.token.delete({ where: { token } });
+  }
+
+  async providerAuth(email: string, agent: string, provider: Provider) {
+    const userExists = await this.userService.findOne(email);
+
+    if (userExists) {
+      const user = await this.userService.save({ email, provider }).catch((err) => {
+        this.logger.error(err);
+        return null;
+      });
+      return this.generateTokens(user, agent);
+    }
+
+    const user = await this.userService.save({ email, provider }).catch((err) => {
+      this.logger.error(err);
+      return null;
+    });
+
+    if (!user) {
+      throw new HttpException(
+        `Unable to create user with email ${email} with ${provider} auth`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return this.generateTokens(user, agent);
   }
 
   private async generateTokens(user: User, agent: string): Promise<Tokens> {

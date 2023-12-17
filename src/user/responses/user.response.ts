@@ -1,4 +1,4 @@
-import { $Enums, User } from '@prisma/client';
+import { $Enums, Provider, User } from '@prisma/client';
 import { Exclude } from 'class-transformer';
 
 export class UserResponse implements User {
@@ -7,6 +7,8 @@ export class UserResponse implements User {
 
   @Exclude()
   password: string;
+  @Exclude()
+  provider: Provider;
   @Exclude()
   createdAt: Date;
 

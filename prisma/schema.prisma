@@ -11,11 +11,12 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id        String    @id @default(uuid())
+  email     String    @unique
+  password  String?
+  provider  Provider?
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
   roles     Role[]
   Token     Token[]
 
@@ -35,4 +36,8 @@ model Token {
 enum Role {
   ADMIN
   USER
+}
+
+enum Provider {
+  GOOGLE
 }
