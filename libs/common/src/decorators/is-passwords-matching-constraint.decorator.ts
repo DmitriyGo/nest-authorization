@@ -9,8 +9,7 @@ export class IsPasswordsMatchingConstraint implements ValidatorConstraintInterfa
     return obj.password === passwordRepeat;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  defaultMessage(validationArguments?: ValidationArguments): string {
-    return 'Passwords do not match';
+  defaultMessage(): string {
+    return 'passwords do not match';
   }
 }
